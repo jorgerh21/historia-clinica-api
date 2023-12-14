@@ -44,12 +44,16 @@ class UserController extends Controller
 
     public function updateUser(Request $request,$id)
     {
-
         if(User::find($id)->exists()){
 		$usuario = User::find($id);	
 		$usuario->name = is_null($request->name)? $usuario->name : $request->name;
 		$usuario->apellido = is_null($request->apellido)? $usuario->apellido : $request->apellido;
-		
+		$usuario->identificacion = is_null($request->identificacion)? $usuario->identificacion : $request->identificacion;
+        $usuario->email = is_null($request->email)? $usuario->email : $request->email;
+        $usuario->celular = is_null($request->celular)? $usuario->celular : $request->celular;
+        $usuario->ubicacion = is_null($request->ubicacion)? $usuario->ubicacion : $request->ubicacion;
+        $usuario->password = is_null($request->password)? $usuario->password : $request->password;
+			
 		$usuario->save();
 		return response()->json([
 		"message"=>"usuario Actualizado"], 201);
