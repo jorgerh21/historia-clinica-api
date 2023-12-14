@@ -13,6 +13,31 @@ class HistoriaController extends Controller
 		return Response()->json($historias);
 	}
 	
+	public function mostrarHistorias($id){
+		$historias = Historias::where('medico_id',$id)->get();
+		foreach ($historias as $historia) {
+			// Código a ejecutar para cada elemento
+			$nombre = Historias::find($historia->id)->medico;
+			$historia->medico = $nombre; 
+			$nombre = Historias::find($historia->id)->paciente;
+			$historia->paciente = $nombre; 
+		}
+		//$historias = Historias::all();
+		return Response()->json($historias);
+	}
+	
+	public function mostrarHistoriasPaciente($id){
+		$historias = Historias::where('paciente_id',$id)->get();
+		foreach ($historias as $historia) {
+			// Código a ejecutar para cada elemento
+			$nombre = Historias::find($historia->id)->medico;
+			$historia->medico = $nombre; 
+			$nombre = Historias::find($historia->id)->paciente;
+			$historia->paciente = $nombre; 
+		}
+		return Response()->json($historias);
+	}
+	
 	public function crearHistoria(Request $request){
 		$historia = new Historias;
 		$historia->medico_id = $request->medico_id;
@@ -30,7 +55,8 @@ class HistoriaController extends Controller
 	}
 	
 	public function actualizarHistoria(Request $request, $id){
-		if(Historias::where($id)->exists()){
+		if(Historias::find($id)->exists()){
+		$historia = Historias::find($id);
 		$historia->medico_id = is_null($request->medico_id)? $historia->medico_id : $request->medico_id;
 		$historia->paciente_id = $request->paciente_id;
 		$historia->medico_id = is_null($request->medico_id)? $historia->medico_id : $request->medico_id;
@@ -49,6 +75,19 @@ class HistoriaController extends Controller
 		$historia->save();
 		return response()->json([
 		"message"=>"Historia Actualizada"], 201);
+		}else{
+			return response()->json(["message"=>"historia no encontrada"],404);
+		}
+		
+	}
+	
+	public function marcarHistoria($id){
+		if(Historias::find($id)->exists()){
+		$historia = Historias::find($id);
+		$historia->estado = "Asistida";
+		$historia->save();
+		return response()->json([
+			"message"=>"Historia Actualizada"], 201);
 		}else{
 			return response()->json(["message"=>"historia no encontrada"],404);
 		}

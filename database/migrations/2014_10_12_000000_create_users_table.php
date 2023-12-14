@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('name');
 			$table->string('apellido');
-			$table->bigInteger('identificacion');
-			$table->bigInteger('celular');
-			$table->string('ubicacion');
+			$table->bigInteger('identificacion')->unique();
+			$table->boolean('primer')->default(false);
+			$table->bigInteger('celular')->nullable();
+			$table->string('ubicacion')->nullable();
 			$table->integer('tipo_usuario_id')
                     ->references('id')
                     ->on('tipo_usuarios')->onDelete('cascade');
-            $table->string('email')->unique();
+            $table->string('email')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

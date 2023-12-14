@@ -19,7 +19,7 @@ return new class extends Migration
 			$table->integer('paciente_id')
                     ->references('id')
                     ->on('users')->onDelete('cascade');
-			$table->string('estado');
+			$table->string('estado')->default('Sin Asistir');;
 			$table->string('antecedentes');
 			$table->string('evolucion');
 			$table->string('concepto');

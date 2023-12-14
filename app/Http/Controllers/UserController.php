@@ -16,18 +16,61 @@ class UserController extends Controller
 		return Response()->json($users);
 	}
 	
+	public function mostrarUsuario($id){
+		$user = User::find($id);
+		return Response()->json($user);
+	}
+
+	public function listaPacientes(){
+		$users = User::where('tipo_usuario_id',2)->get();;
+		return Response()->json($users);
+	}
+
+    public function password(Request $request,$id)
+    {
+        if(User::find($id)->exists()){
+		$usuario = User::find($id);	
+		$usuario->password = $request->password;
+		$usuario->primer = 1;
+		
+		$usuario->save();
+		return response()->json([
+		"message"=>"usuario Actualizado"], 201);
+		}else{
+			return response()->json(["message"=>"usuario no encontrado"],404);
+		}
+		
+    }
+
+    public function updateUser(Request $request,$id)
+    {
+
+        if(User::find($id)->exists()){
+		$usuario = User::find($id);	
+		$usuario->name = is_null($request->name)? $usuario->name : $request->name;
+		$usuario->apellido = is_null($request->apellido)? $usuario->apellido : $request->apellido;
+		
+		$usuario->save();
+		return response()->json([
+		"message"=>"usuario Actualizado"], 201);
+		}else{
+			return response()->json(["message"=>"usuario no encontrado"],404);
+		}
+		
+    }
+	
 	public function __construct()
     {
-        $this->middleware('auth:sanctum', ['except' => ['login', 'register']]);
+        //$this->middleware('auth:sanctum', ['except' => ['login', 'register']]);
     }
 
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email',
+            'identificacion' => 'required|string',
             'password' => 'required|string',
         ]);
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('identificacion', 'password');
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             return response()->json([
@@ -40,7 +83,7 @@ class UserController extends Controller
         }
 
         return response()->json([
-            'message' => 'Invalid credentials',
+            'message' => 'credenciales incorrectas',
         ], 401);
     }
 
@@ -49,9 +92,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
 			'apellido' => 'required|string|max:255',
-			'identificacion' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
+			'identificacion' => 'required|max:255|unique:users',
         ]);
 
         $user = User::create([
@@ -59,20 +100,24 @@ class UserController extends Controller
             'apellido' => $request->apellido,
 			'identificacion' => $request->identificacion,
 			'email' => $request->email,
-            'password' => Hash::make($request->password),
+			'tipo_usuario_id' => $request->tipoUsuario,
+			'celular' => $request->celular,
+			'ubicacion' => $request->ubicacion,
+            'password' => Hash::make($request->identificacion),
         ]);
 
         return response()->json([
-            'message' => 'User created successfully',
+            'message' => 'Usuario creado exitosamente',
             'user' => $user
         ]);
     }
+
 
     public function logout()
     {
         Auth::user()->tokens()->delete();
         return response()->json([
-            'message' => 'Successfully logged out',
+            'message' => 'logged out',
         ]);
     }
 

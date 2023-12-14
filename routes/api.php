@@ -22,15 +22,24 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:sanctum')->get('/historias','App\Http\Controllers\HistoriaController@index');
-Route::get('/historias/{id}','App\Http\Controllers\HistoriaController@mostrarHistoria');
 Route::post('/historias','App\Http\Controllers\HistoriaController@crearHistoria');
 Route::put('/historias/{id}','App\Http\Controllers\HistoriaController@actualizarHistoria');
 Route::delete('/historias/{id}','App\Http\Controllers\HistoriaController@borrarHistoria');
 
+Route::get('/historias/{id}','App\Http\Controllers\HistoriaController@mostrarHistoria');
+Route::put('/marcar/{id}','App\Http\Controllers\HistoriaController@marcarHistoria');
+
 
 Route::get('/usuarios','App\Http\Controllers\UserController@index');
+Route::get('/usuarios/{id}','App\Http\Controllers\UserController@mostrarUsuario');
+Route::get('/pacientes','App\Http\Controllers\UserController@listaPacientes');
 
+Route::put('/actualizar/{id}','App\Http\Controllers\UserController@updateUser');
+Route::put('/password/{id}','App\Http\Controllers\UserController@password');
+
+Route::middleware('auth:sanctum')->get('/historias','App\Http\Controllers\HistoriaController@index');
+Route::middleware('auth:sanctum')->get('/verhistorias/{id}','App\Http\Controllers\HistoriaController@mostrarHistorias');
+Route::middleware('auth:sanctum')->get('/verhistoriaspaciente/{id}','App\Http\Controllers\HistoriaController@mostrarHistoriasPaciente');
 
 Route::controller(UserController::class)->group(function () {
     Route::post('login', 'login');
